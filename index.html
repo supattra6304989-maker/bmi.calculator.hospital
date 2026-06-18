@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมคำนวณ BMI, BMR และ TDEE</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 min-h-screen py-10 px-4">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-cyan-600 text-white p-6 text-center">
+            <h1 class="text-2xl md:text-3xl font-bold">ระบบคำนวณดัชนีมวลกายและพลังงาน</h1>
+            <p class="text-cyan-100 mt-2 text-sm md:text-base">อ้างอิงเกณฑ์การแปลผลและสูตรคำนวณจาก โรงพยาบาลเอกชล</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
+            <div class="space-y-6">
+                <h2 class="text-xl font-semibold text-gray-700 border-b pb-2">กรอกข้อมูลของคุณ</h2>
+                <div>
+                    <label class="block text-gray-600 mb-2 font-medium">เพศ</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 has-[:checked]:bg-cyan-50 has-[:checked]:border-cyan-500 transition">
+                            <input type="radio" name="gender" value="male" checked class="mr-2 accent-cyan-600"> ชาย
+                        </label>
+                        <label class="flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 has-[:checked]:bg-cyan-50 has-[:checked]:border-cyan-500 transition">
+                            <input type="radio" name="gender" value="female" class="mr-2 accent-cyan-600"> หญิง
+                        </label>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="age" class="block text-gray-600 mb-1 font-medium">อายุ (ปี)</label>
+                        <input type="number" id="age" min="1" max="120" placeholder="ตัวอย่าง: 30" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div>
+                        <label for="weight" class="block text-gray-600 mb-1 font-medium">น้ำหนัก (กิโลกรัม)</label>
+                        <input type="number" id="weight" step="0.1" placeholder="ตัวอย่าง: 65" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                    <div>
+                        <label for="height" class="block text-gray-600 mb-1 font-medium">ส่วนสูง (เซนติเมตร)</label>
+                        <input type="number" id="height" step="0.1" placeholder="ตัวอย่าง: 170" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+                </div>
+                <div>
+                    <label for="activity" class="block text-gray-600 mb-1 font-medium">ระดับกิจกรรมประจำวัน</label>
+                    <select id="activity" class="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
+                        <option value="1.2">ระดับ 1: น้อยมาก (Little to None) - นั่งทำงานอยู่กับที่ ไม่ได้ออกกำลังกาย</option>
+                        <option value="1.5">ระดับ 2: ปานกลาง (Moderate) - ยืนเดินทำงาน ออกกำลังกายสม่ำเสมอ</option>
+                        <option value="1.8">ระดับ 3: หนักมาก (Active/Intense) - ออกกำลังกายหนัก นักกีฬา ใช้แรงงานมาก</option>
+                    </select>
+                </div>
+                <button onclick="calculateHealthMetrics()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold p-4 rounded-xl shadow-md transition duration-200">คำนวณผลลัพธ์</button>
+            </div>
+            <div id="result-box" class="bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-300 flex flex-col justify-center items-center text-gray-400">
+                <p class="text-lg">กรอกข้อมูลและกดปุ่มคำนวณเพื่อดูผลลัพธ์</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function calculateHealthMetrics() {
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const heightCm = parseFloat(document.getElementById('height').value);
+            const activityMultiplier = parseFloat(document.getElementById('activity').value);
+
+            if (!age || !weight || !heightCm || age <= 0 || weight <= 0 || heightCm <= 0) {
+                alert('กรุณากรอกข้อมูล อายุ น้ำหนัก และส่วนสูง ให้ถูกต้องครบถ้วนครับ');
+                return;
+            </div>
+
+            const heightM = heightCm / 100;
+            const bmi = weight / (heightM * heightM);
+            
+            let bmiText = ""; let bmiColorClass = "";
+            if (bmi < 18.50) { bmiText = "ต่ำกว่าเกณฑ์"; bmiColorClass = "text-amber-500 bg-amber-50 border-amber-200"; }
+            else if (bmi <= 22.90) { bmiText = "ปกติ สมส่วน"; bmiColorClass = "text-green-600 bg-green-50 border-green-200"; }
+            else if (bmi <= 24.90) { bmiText = "น้ำหนักเกิน"; bmiColorClass = "text-orange-500 bg-orange-50 border-orange-200"; }
+            else if (bmi <= 29.90) { bmiText = "อ้วน"; bmiColorClass = "text-red-500 bg-red-50 border-red-200"; }
+            else { bmiText = "อ้วนมาก"; bmiColorClass = "text-red-800 bg-red-100 border-red-300"; }
+
+            let bmr = 0;
+            if (gender === 'male') { bmr = 66 + (13.7 * weight) + (5 * heightCm) - (6.8 * age); }
+            else { bmr = 665 + (9.6 * weight) + (1.8 * heightCm) - (4.7 * age); }
+
+            const tdee = bmr * activityMultiplier;
+            const resultBox = document.getElementById('result-box');
+            resultBox.className = "bg-white p-6 rounded-2xl border border-slate-200 space-y-6";
+            resultBox.innerHTML = `
+                <h2 class="text-xl font-semibold text-gray-700 border-b pb-2 w-full text-center md:text-left">ผลลัพธ์การวิเคราะห์</h2>
+                <div class="p-4 border rounded-xl ${bmiColorClass} transition-all">
+                    <div class="text-sm font-medium opacity-80">ดัชนีมวลกาย (BMI)</div>
+                    <div class="text-3xl font-bold my-1">${bmi.toFixed(2)}</div>
+                    <div class="text-base font-semibold">แปลผล: ${bmiText}</div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                    <div class="p-4 bg-teal-50 border border-teal-100 text-teal-800 rounded-xl">
+                        <div class="text-xs font-medium opacity-80">BMR (พลังงานพื้นฐาน)</div>
+                        <div class="text-2xl font-bold my-1">${Math.round(bmr).toLocaleString()} <span class="text-sm font-normal">kcal</span></div>
+                    </div>
+                    <div class="p-4 bg-purple-50 border border-purple-100 text-purple-800 rounded-xl">
+                        <div class="text-xs font-medium opacity-80">TDEE (พลังงานรวมกิจกรรม)</div>
+                        <div class="text-2xl font-bold my-1">${Math.round(tdee).toLocaleString()} <span class="text-sm font-normal">kcal</span></div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl text-xs text-gray-500 w-full">
+                    <p class="font-medium mb-1">💡 ข้อมูลเพิ่มเติมสำหรับคุณ:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>หากต้องการควบคุมหรือลดน้ำหนัก ควรรับประทานอาหารให้พลังงานรวมอยู่ระหว่างค่า BMR และ TDEE</li>
+                        <li>เกณฑ์ BMI นี้ใช้สำหรับประเมินสัดส่วนร่างกายเบื้องต้นของประชากรผู้ใหญ่ชาวเอเชีย</li>
+                    </ul>
+                </div>`;
+        }
+    </script>
+</body>
+</html>
